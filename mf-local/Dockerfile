@@ -17,7 +17,7 @@ RUN apt-get -y update && \
   add-apt-repository -y ppa:ondrej/php5-oldstable && \
   apt-get -y update && \
   apt-get -y install supervisor openssh-server apache2 php5 curl php5-curl php5-mcrypt php5-mysql && \
-  apt-get -y install php-pear php5-dev libssh2-1-dev libssh2-php git vim make && \
+  apt-get -y install php-pear php5-dev libapache-mod-ssl libssh2-1-dev libssh2-php git vim make && \
   mkdir -p $APACHE_LOCK_DIR /var/run/apache2 /var/run/sshd /var/log/supervisor && \
   apt-get remove --purge -y software-properties-common && \
   apt-get autoremove -y && \
@@ -43,7 +43,8 @@ RUN pear install Mail_Mime
 
 # Enable PHP Modules
 RUN a2enmod php5 && \
-  a2enmod rewrite
+  a2enmod rewrite && \
+  a2enmod ssl
 
 # Make the logging directory
 RUN mkdir -p $APACHE_LOG_DIR
