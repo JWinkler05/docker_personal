@@ -3,7 +3,6 @@ FROM ubuntu:12.04
 MAINTAINER John Winkler <john.winkler@dialogtech.com>
 
 # Update Base image
-# Install needed dependencies for MongooseFramework
 
 # Set Environment Variables
 ENV APACHE_RUN_USER www-data
@@ -30,16 +29,8 @@ RUN sudo pecl install xdebug
 # Copy the configuration file for the supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Make needed Directories
-RUN mkdir /var/DialogTech && \
-  mkdir /var/DialogTech/composer
-
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer && \
-  sudo php -- --install-dir=/var/DialogTech/composer --filename=composer
-
-# Install Mail Mime for PHP
-RUN pear install Mail_Mime
+# Add the apache config from local to the sites enabled space.
+ADD apache2/apache-config.conf /etc/apache2/sites-enabled/000-default.conf
 
 # Enable PHP Modules
 RUN a2enmod php5 && \
@@ -48,9 +39,6 @@ RUN a2enmod php5 && \
 
 # Make the logging directory
 RUN mkdir -p $APACHE_LOG_DIR
-
-# Add the apache config from local to the sites enabled space.
-ADD apache-config.conf /etc/apache2/sites-enabled/000-default.conf
 
 # Install PHP Unit
 RUN apt-get install wget && \
@@ -61,8 +49,6 @@ RUN apt-get install wget && \
 
 RUN ln -sf /dev/stdout $APACHE_LOG_DIR/access.log
 RUN ln -sf /dev/stderr $APACHE_LOG_DIR/error.log
-
-WORKDIR /var/www/html/restapi.mongoosemetrics.com
 
 EXPOSE 22 80 443
 
